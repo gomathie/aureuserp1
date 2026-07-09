@@ -60,6 +60,27 @@ class SupportPlugin implements Plugin
                         }
                     }, 0);
                 });
+
+                /* View Transitions API – Progressive Enhancement */
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.hook('request', ({ respond, succeed, fail }) => {
+                        respond(({ status, response }) => {
+                            if (status !== 200 || !document.startViewTransition) return;
+
+                            document.startViewTransition(() => {
+                                return new Promise((resolve) => {
+                                    succeed(({ snapshot, effects }) => {
+                                        queueMicrotask(resolve);
+                                    });
+
+                                    fail(() => {
+                                        queueMicrotask(resolve);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
             </script>
         "));
     }

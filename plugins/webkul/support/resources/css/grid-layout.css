@@ -1,9 +1,23 @@
+/* ==========================================================================
+   Records Grid – Fluid Responsive Layout
+   ========================================================================== */
+
 .fi-ta-content-grid {
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
     container-type: inline-size;
 }
 
+/* ==========================================================================
+   Clickable Record Cards – Hover Feedback & Micro-interactions
+   ========================================================================== */
+
 .fi-ta-record.fi-clickable {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
     transition:
         transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
         box-shadow 0.2s ease,
@@ -15,4 +29,40 @@
         transform: translateY(-4px);
         box-shadow: 0 12px 24px -10px rgb(0 0 0 / 0.1);
     }
+}
+
+/* --------------------------------------------------------------------------
+   Image / Thumbnail / Icon Micro-interactions
+   -------------------------------------------------------------------------- */
+
+.fi-ta-record.fi-clickable img,
+.fi-ta-record.fi-clickable .fi-ta-image img,
+.fi-ta-record.fi-clickable [class*="avatar"] img,
+.fi-ta-record.fi-clickable [class*="thumbnail"] img {
+    transition: transform 0.2s ease;
+    will-change: transform;
+}
+
+.fi-ta-record.fi-clickable:hover img,
+.fi-ta-record.fi-clickable:hover .fi-ta-image img,
+.fi-ta-record.fi-clickable:hover [class*="avatar"] img,
+.fi-ta-record.fi-clickable:hover [class*="thumbnail"] img {
+    transform: scale(1.05);
+}
+
+/* Prevent layout shifts from scaled images */
+.fi-ta-record.fi-clickable .fi-ta-image,
+.fi-ta-record.fi-clickable [class*="avatar"],
+.fi-ta-record.fi-clickable [class*="thumbnail"] {
+    overflow: hidden;
+}
+
+/* Icon column SVGs – subtle scale on hover */
+.fi-ta-record.fi-clickable .fi-ta-icon svg {
+    transition: transform 0.2s ease;
+    will-change: transform;
+}
+
+.fi-ta-record.fi-clickable:hover .fi-ta-icon svg {
+    transform: scale(1.05);
 }
