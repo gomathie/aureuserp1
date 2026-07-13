@@ -17,6 +17,7 @@ use Webkul\Account\Enums\AutoPostBills;
 use Webkul\Account\Enums\InvoiceFormat;
 use Webkul\Account\Enums\InvoiceSendingMethod;
 use Webkul\Account\Enums\PartyIdentificationScheme;
+use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Models\Account;
 
 class AccountPartnerSchema
@@ -32,7 +33,12 @@ class AccountPartnerSchema
                         ->searchable()
                         ->label(__('accounts::filament/resources/partner.form.tabs.sales-purchases.fieldsets.sales.fields.payment-terms')),
                     Select::make('property_inbound_payment_method_line_id')
-                        ->relationship('propertyInboundPaymentMethodLine', 'name')
+                        ->relationship(
+                            name: 'propertyInboundPaymentMethodLine',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: fn ($query) => $query->whereHas('paymentMethod', fn ($q) => $q->where('payment_type', PaymentType::RECEIVE)),
+                        )
+                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                         ->preload()
                         ->searchable()
                         ->label(__('accounts::filament/resources/partner.form.tabs.sales-purchases.fieldsets.sales.fields.payment-method')),
@@ -54,7 +60,12 @@ class AccountPartnerSchema
                                 ->searchable()
                                 ->preload(),
                             Select::make('property_outbound_payment_method_line_id')
-                                ->relationship('propertyOutboundPaymentMethodLine', 'name')
+                                ->relationship(
+                                    name: 'propertyOutboundPaymentMethodLine',
+                                    titleAttribute: 'name',
+                                    modifyQueryUsing: fn ($query) => $query->whereHas('paymentMethod', fn ($q) => $q->where('payment_type', PaymentType::SEND)),
+                                )
+                                ->getOptionLabelFromRecordUsing(fn ($record) => $record->display_name)
                                 ->preload()
                                 ->searchable()
                                 ->label(__('accounts::filament/resources/partner.form.tabs.sales-purchases.fieldsets.purchase.fields.payment-method')),
@@ -157,7 +168,7 @@ class AccountPartnerSchema
                         ->placeholder('-')
                         ->label(__('accounts::filament/resources/partner.infolist.tabs.sales-purchases.fieldsets.sales.entries.payment-terms'))
                         ->icon('heroicon-o-calendar'),
-                    TextEntry::make('propertyInboundPaymentMethodLine.name')
+                    TextEntry::make('propertyInboundPaymentMethodLine.display_name')
                         ->placeholder('-')
                         ->label(__('accounts::filament/resources/partner.infolist.tabs.sales-purchases.fieldsets.sales.entries.payment-method'))
                         ->icon('heroicon-o-credit-card'),
@@ -177,7 +188,7 @@ class AccountPartnerSchema
                                 ->label(__('accounts::filament/resources/partner.infolist.tabs.sales-purchases.fieldsets.purchase.entries.payment-terms'))
                                 ->placeholder('-')
                                 ->icon('heroicon-o-calendar'),
-                            TextEntry::make('propertyOutboundPaymentMethodLine.name')
+                            TextEntry::make('propertyOutboundPaymentMethodLine.display_name')
                                 ->placeholder('-')
                                 ->label(__('accounts::filament/resources/partner.infolist.tabs.sales-purchases.fieldsets.purchase.entries.payment-method'))
                                 ->icon('heroicon-o-banknotes'),
