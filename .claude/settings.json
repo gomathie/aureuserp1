@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan view:clear)",
-      "Bash(docker version *)"
+      "Bash(docker version *)",
+      "Bash(grep -rnE '\\(api[_-]?key|secret|token|passwd|password\\)\\\\s*=\\\\s*['\\\\''\"][A-Za-z0-9+/=_-]{16,}['\\\\''\"]' app plugins config --include=*.php)"
     ]
   }
 }
